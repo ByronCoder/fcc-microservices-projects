@@ -24,12 +24,26 @@ app.get("/api/hello", function (req, res) {
   res.json({greeting: 'hello API'});
 });
 
-app.get("/api/timestamp/:date", function(req, res) {
-  var date = new Date(req.params.date);
-  var dateTime = date.getTime();
-  var dateUTC = date.toUTCString();
-  
-  res.json({"unix": dateTime, "utc": date.toUTCString()});
+app.get("/api/timestamp/:dateVal", function(req, res) {
+    var dateVal = req.params.dateVal;
+
+    var dateFormattingOptions = {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    };
+
+    if(isNaN(dateVal)) {
+        var naturalDate = new Date(dateVal);
+        naturalDate = naturalDate.toLocaleDateString("en-us", dateFormattingOptions);
+        var unixDate = new Date(dateVal).getTime() / 1000;
+    }
+    else {
+        var unixDate = dateVal;
+        var naturalDate = new Date(dateVal * 1000);
+        naturalDate = naturalDate.toLocaleDateString("en-us", dateFormattingOptions);
+    }
+    res.json({unix: unixDate, natural: naturalDate});
 });
 
 
